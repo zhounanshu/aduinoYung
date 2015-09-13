@@ -9,7 +9,6 @@
 #define LED6 7
 
 void controlLed(int signal);
-
 void ioInit(){
   pinMode(LED1, OUTPUT);
   pinMode(LED2, OUTPUT);
@@ -21,13 +20,15 @@ void ioInit(){
 
 void controlLed(int signal){
   int flag = 0;
-  
-  Serial.println(char(signal));
-  if(signal > 0 && signal < 50){
-      flag = signal / 30 + 1;     
+//  Serial.println(str);
+  if(signal == 0){
+      flag = 0;
+    }
+  if(signal > 0 && signal < 40){
+      flag = signal / 10 + 1;     
   }
-  Serial.println(char(flag));
-  if(signal >= 50){
+//  Serial.println(char(flag));
+  if(signal >= 40){
     flag = 5;
   }
   
@@ -139,28 +140,29 @@ int signal;
 void loop() {
   // Initialize the client library
   HttpClient client;
+  char strValue[6]= {0};
   int index = 0;
 
   // Make a HTTP request:
-  client.get("http://localhost/num.txt");
+  client.get("http://zhanghonglun.cn/shfd/get.php");
 
   // if there are incoming bytes available
   // from the server, read them and print them:
   while (client.available()) {
     char c = client.read();
 //    Serial.println(c);
-    if (index<2 && isDigit(c)){
+    if (index<6 && isDigit(c)){
       strValue[index++]=c;
     }
     else{
       strValue[index] = 0;
     }
+    Serial.println(strValue);
     signal = atoi(strValue);    
   }
-//  signal = 20;
 //  Serial.flush();
   Serial.println("starting .......");
-  Serial.print(signal);
+//  Serial.print(signal);
   controlLed(signal);
   Serial.println("ending .......");  
 }
